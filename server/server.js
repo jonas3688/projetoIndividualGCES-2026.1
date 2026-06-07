@@ -1,13 +1,12 @@
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server),
+    { Server } = require('socket.io'),
+    io = new Server(server),
     GameCollection = require('./games.js').GameCollection,
     games = new GameCollection();
 
-app.configure(function () {
-  app.use(express.static(__dirname + '/../game'));
-});
+app.use(express.static(__dirname + '/../game'));
 
 server.listen(55555);
 
