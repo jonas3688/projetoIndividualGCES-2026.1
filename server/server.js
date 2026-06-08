@@ -6,9 +6,24 @@ var express = require('express'),
     GameCollection = require('./games.js').GameCollection,
     games = new GameCollection();
 
+const { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/mkjs'
+});
+
+pool.query(`
+  CREATE TABLE IF NOT EXISTS connections (
+    id SERIAL PRIMARY KEY,
+    socket_id VARCHAR(100),
+    connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`).catch(console.error);
+
 app.use(express.static(__dirname + '/../game'));
 
-server.listen(55555);
+server.listen(55555, () => {
+    console.log('Server is running on port 55555');
+});
 
 var Responses = {
     SUCCESS: 0,
@@ -22,6 +37,8 @@ var Responses = {
   };
 
 io.sockets.on('connection', function (socket) {
+  pool.query('INSERT INTO connections (socket_id) VALUES ($1)', [socket.id]).catch(console.error);
+  
   socket.on(Requests.CREATE_GAME, function (gameName) {
     if (games.createGame(gameName)) {
       games.getGame(gameName).addPlayer(socket);

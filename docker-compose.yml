@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "55555:55555"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/mkjs
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./game:/usr/src/app/game
+      - ./server:/usr/src/app/server
+      - /usr/src/app/server/node_modules
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mkjs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
