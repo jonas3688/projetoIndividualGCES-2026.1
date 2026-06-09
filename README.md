@@ -4,6 +4,27 @@ Os conhecimentos de Gerência de Configuração e Evolução de Software (GCES) 
 
 A aplicação base é o **mk.js**, um jogo de luta implementado com Backend em Node.js/Express e Frontend em HTML5 Canvas/JavaScript. O projeto original é considerado *deprecated* e possui dependências antigas; parte do desafio é modernizar o ambiente para que ele execute com versões estáveis atuais.
 
+## Como Rodar
+
+### Ambiente de Desenvolvimento (DEV)
+Para rodar localmente com hot-reload e persistência:
+```bash
+docker-compose up --build
+```
+Acesse `http://localhost:55555`
+
+### Ambiente de Produção (PROD)
+A pipeline de CI/CD (GitHub Actions) realiza o build das imagens automaticamente. Para fazer o deploy da infraestrutura:
+
+1. Provisionar a infraestrutura AWS via Terraform:
+```bash
+cd terraform && terraform apply
+```
+2. Aplicar os manifestos do Kubernetes:
+```bash
+kubectl apply -f k8s/
+```
+
 ## Requisitos do Projeto
 
 O trabalho está dividido em 10 etapas, cada uma valendo **1,0 ponto**. O foco é a implementação técnica aliada à correta documentação e histórico de commits.
