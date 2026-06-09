@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mkjs-deployment
+  labels:
+    app: mkjs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mkjs
+  template:
+    metadata:
+      labels:
+        app: mkjs
+    spec:
+      containers:
+      - name: mkjs-app
+        image: mkjs-prod:latest
+        ports:
+        - containerPort: 55555
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: mkjs-db-secret
+              key: database_url
