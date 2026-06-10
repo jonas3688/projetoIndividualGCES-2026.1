@@ -21,4 +21,4 @@ spec:
           service:
             name: mkjs-service
             port:
-              number: 55555
+              number: 80

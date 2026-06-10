@@ -1,13 +1,27 @@
-# Build Stage
+# Build Stage - install backend dependencies
 FROM node:20-alpine AS builder
 WORKDIR /usr/src/app/server
 COPY server/package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 COPY server/ ./
 
-# Production Stage
-FROM node:20-alpine
-WORKDIR /usr/src/app/server
-COPY --from=builder /usr/src/app/server ./
-EXPOSE 55555
-CMD ["npm", "start"]
+# Production Stage - Nginx serves static frontend + Node backend
+FROM nginx:alpine
+
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy frontend static files to Nginx html root
+COPY game/ /usr/share/nginx/html/
+
+# Copy backend into a separate location
+COPY --from=builder /usr/src/app/server /usr/src/app/server
+
+# Install Node.js in the Nginx container for the backend
+RUN apk add --no-cache nodejs npm
+
+# Expose ports
+EXPOSE 80
+
+# Start Nginx in foreground and backend in background
+CMD sh -c "cd /usr/src/app/server && node server.js & nginx -g 'daemon off;'"

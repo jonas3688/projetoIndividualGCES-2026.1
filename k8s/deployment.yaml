@@ -18,10 +18,7 @@ spec:
       - name: mkjs-app
         image: mkjs-prod:latest
         ports:
-        - containerPort: 55555
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: mkjs-db-secret
-              key: database_url
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: mkjs-config

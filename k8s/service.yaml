@@ -8,5 +8,5 @@ spec:
     app: mkjs
   ports:
     - protocol: TCP
-      port: 55555
-      targetPort: 55555
+      port: 80
+      targetPort: 80

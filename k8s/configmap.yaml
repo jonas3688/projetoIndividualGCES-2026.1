@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mkjs-config
+data:
+  DATABASE_URL: "postgres://postgres:postgres@mkjs-db:5432/mkjs"
+  NODE_ENV: "production"
